@@ -17,7 +17,7 @@ namespace Apartments_API.Controllers
             
         }
         [HttpGet("{id:int}", Name ="GetApartment")]
-        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public ActionResult <ApartmentDTO> GetApartment(int id)
@@ -36,8 +36,20 @@ namespace Apartments_API.Controllers
         }
 
         [HttpPost]
-        public ActionResult<ApartmentDTO> CreateApartment(ApartmentDTO apartmentDTO)
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public ActionResult<ApartmentDTO> CreateApartment([FromBody]ApartmentDTO apartmentDTO)
         {
+            //if (!ModelState.IsValid)
+            //{
+            //    return BadRequest(ModelState);
+            //}
+            if (ApartmentStore.apartmentList.FirstOrDefault(u => u.Name.ToLower() == apartmentDTO.Name.ToLower()) != null)
+            {
+                ModelState.AddModelError("CustomError", "Apartment already exist!");
+                return BadRequest(ModelState);
+            }
             if (apartmentDTO == null)
             {
                 return BadRequest(apartmentDTO);
