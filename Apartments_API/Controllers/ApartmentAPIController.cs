@@ -10,15 +10,24 @@ namespace Apartments_API.Controllers
     public class ApartmentAPIController : ControllerBase
     {
         [HttpGet]
-        public IEnumerable<ApartmentDTO> GetApartments()
+        public ActionResult <IEnumerable<ApartmentDTO>> GetApartments()
         {
-            return ApartmentStore.apartmentList;
+            return Ok(ApartmentStore.apartmentList);
             
         }
         [HttpGet("{id:int}")]
-        public ApartmentDTO GetApartment(int id)
+        public ActionResult <ApartmentDTO> GetApartment(int id)
         {
-            return ApartmentStore.apartmentList.FirstOrDefault(u => u.Id == id);
+            if (id == 0)
+            {
+                return BadRequest();
+            }
+            var apartment = ApartmentStore.apartmentList.FirstOrDefault(u => u.Id == id);
+            if (apartment == null)
+            {
+                return NotFound();
+            }
+            return Ok(apartment);
 
         }
     }
