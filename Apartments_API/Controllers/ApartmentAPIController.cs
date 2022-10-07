@@ -1,6 +1,7 @@
 ﻿using Apartment_API.Data;
 using Apartments_API.Models;
 using Apartments_API.Models.DTO;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Apartments_API.Controllers
@@ -110,6 +111,30 @@ namespace Apartments_API.Controllers
             return NoContent();
 
         }
-    
+        [HttpPatch("{id:int}", Name = "UpdatePartialApartment")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+
+        public IActionResult UpdatePartialApartment(int id, JsonPatchDocument<ApartmentDTO> patchDTO)
+        {
+            if (patchDTO == null || id == 0)
+            {
+                return BadRequest();
+            }
+            //if id is not zero, we can try to retrieve apartment from apartment list
+            var apartment = ApartmentStore.apartmentList.FirstOrDefault(u=>u.Id==id);
+            if (apartment == null)
+            {
+                return BadRequest();
+            }
+            patchDTO.ApplyTo(apartment, ModelState);
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            return NoContent();
+
+        }
+
     }
 }
