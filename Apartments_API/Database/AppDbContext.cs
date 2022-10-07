@@ -10,6 +10,6 @@ namespace Apartment_API.Database
         : base(options)
         {
         }
-        public DbSet<Apartment> Apartments { get; set; }
+        public DbSet<Apartment> Apartments { get; set; } //name of the table
     }
 }
