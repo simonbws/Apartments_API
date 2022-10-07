@@ -1,4 +1,5 @@
 ﻿using Apartment_API.Data;
+using Apartment_API.Logging;
 using Apartments_API.Models;
 using Apartments_API.Models.DTO;
 using Microsoft.AspNetCore.JsonPatch;
@@ -10,10 +11,22 @@ namespace Apartments_API.Controllers
     [ApiController]
     public class ApartmentAPIController : ControllerBase
     {
+        private readonly ILogging _logger;
+
+        public ApartmentAPIController(ILogging logger)
+        {
+            _logger = logger;
+        }
+
+
+
+
+
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public ActionResult <IEnumerable<ApartmentDTO>> GetApartments()
         {
+            _logger.Log("Getting all apartments", "");
             return Ok(ApartmentStore.apartmentList);
             
         }
@@ -25,6 +38,7 @@ namespace Apartments_API.Controllers
         {
             if (id == 0)
             {
+                _logger.Log("Get Apartment Error with Id" + id, "error");
                 return BadRequest();
             }
             var apartment = ApartmentStore.apartmentList.FirstOrDefault(u => u.Id == id);
