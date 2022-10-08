@@ -1,4 +1,5 @@
 
+using Apartment_API;
 using Apartment_API.Database;
 using Microsoft.EntityFrameworkCore;
 
@@ -8,6 +9,8 @@ builder.Services.AddDbContext<AppDbContext>(option =>
 {
     option.UseSqlServer(builder.Configuration.GetConnectionString("DefaultSQLConnection"));
 });
+builder.Services.AddAutoMapper(typeof(MapProperties)); // this ensures transfer even 50 or more 
+//mappings into config file
 
 builder.Services.AddControllers(option => {
     //option.ReturnHttpNotAcceptable = true;
