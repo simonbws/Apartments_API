@@ -1,4 +1,4 @@
-﻿using Apartment_API.Data;
+﻿using Apartment_API.Database;
 using Apartments_API.Models;
 using Apartments_API.Models.DTO;
 using Microsoft.AspNetCore.JsonPatch;
