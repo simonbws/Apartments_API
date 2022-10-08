@@ -10,11 +10,11 @@ namespace Apartments_API.Controllers
     [ApiController]
     public class ApartmentAPIController : ControllerBase
     {
-        
+        private readonly AppDbContext _db;
 
-        public ApartmentAPIController( )
+        public ApartmentAPIController(AppDbContext db)
         {
-           
+            _db = db;
         }
 
         [HttpGet]
@@ -22,7 +22,7 @@ namespace Apartments_API.Controllers
         public ActionResult <IEnumerable<ApartmentDTO>> GetApartments()
         {
             
-            return Ok(ApartmentStore.apartmentList);
+            return Ok(_db.Apartments.ToList());
             
         }
         [HttpGet("{id:int}", Name ="GetApartment")]
@@ -36,7 +36,7 @@ namespace Apartments_API.Controllers
                 
                 return BadRequest();
             }
-            var apartment = ApartmentStore.apartmentList.FirstOrDefault(u => u.Id == id);
+            var apartment = _db.Apartments.FirstOrDefault(u => u.Id == id);
             if (apartment == null)
             {
                 return NotFound();
@@ -55,7 +55,7 @@ namespace Apartments_API.Controllers
             //{
             //    return BadRequest(ModelState);
             //}
-            if (ApartmentStore.apartmentList.FirstOrDefault(u => u.Name.ToLower() == apartmentDTO.Name.ToLower()) != null)
+            if (_db.Apartments.FirstOrDefault(u => u.Name.ToLower() == apartmentDTO.Name.ToLower()) != null)
             {
                 ModelState.AddModelError("CustomError", "Apartment already exist!");
                 return BadRequest(ModelState);
@@ -68,8 +68,19 @@ namespace Apartments_API.Controllers
             {
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
-            apartmentDTO.Id = ApartmentStore.apartmentList.OrderByDescending(u => u.Id).FirstOrDefault().Id + 1;
-            ApartmentStore.apartmentList.Add(apartmentDTO); //we added this villa object to Store
+            Apartment model = new()
+            {
+                Amenity = apartmentDTO.Amenity,
+                Details = apartmentDTO.Details,
+                Id = apartmentDTO.Id,
+                ImagePath = apartmentDTO.ImagePath,
+                Name = apartmentDTO.Name,
+                Occupancy = apartmentDTO.Occupancy,
+                Rate = apartmentDTO.Rate,
+                SquareFeet = apartmentDTO.SquareFeet
+            };
+            _db.Apartments.Add(model);
+            _db.SaveChanges();
 
             return CreatedAtRoute("GetApartment", new { id = apartmentDTO.Id },apartmentDTO);
         }
@@ -86,14 +97,15 @@ namespace Apartments_API.Controllers
             }
             //if is not equal to zero, then from the villa store, we will use first or default
             //and retrieve villa that we have to deleete
-            var apartment = ApartmentStore.apartmentList.FirstOrDefault(u => u.Id == id);
+            var apartment = _db.Apartments.FirstOrDefault(u => u.Id == id);
             if (apartment == null)
             {
                 return NotFound();
             }
             //if we do find apartment, then we will use apartmentstore, remove and we will
             //pass apartment which we want to remove
-            ApartmentStore.apartmentList.Remove(apartment);
+            _db.Apartments.Remove(apartment);
+            _db.SaveChanges();
             return NoContent();
         }
 
@@ -111,12 +123,25 @@ namespace Apartments_API.Controllers
                 return BadRequest();
             }
             //we need to retrieve based on the id which we passed into method
-            var apartment = ApartmentStore.apartmentList.FirstOrDefault(u=>u.Id == id);
-            //now we update square feet and occupancy based on the apartmentDTO
-            apartment.Name = apartmentDTO.Name;
-            apartment.SquareFeet = apartmentDTO.SquareFeet;
-            apartment.Occupancy = apartmentDTO.Occupancy;
-
+            //var apartment = ApartmentStore.apartmentList.FirstOrDefault(u=>u.Id == id);
+            ////now we update square feet and occupancy based on the apartmentDTO
+            //apartment.Name = apartmentDTO.Name;
+            //apartment.SquareFeet = apartmentDTO.SquareFeet;
+            //apartment.Occupancy = apartmentDTO.Occupancy;
+            //we need to convert apartmentDTO to apartment object
+            Apartment model = new()
+            {
+                Amenity = apartmentDTO.Amenity,
+                Details = apartmentDTO.Details,
+                Id = apartmentDTO.Id,
+                ImagePath = apartmentDTO.ImagePath,
+                Name = apartmentDTO.Name,
+                Occupancy = apartmentDTO.Occupancy,
+                Rate = apartmentDTO.Rate,
+                SquareFeet = apartmentDTO.SquareFeet
+            };
+            _db.Apartments.Update(model);
+            _db.SaveChanges();
             return NoContent();
 
         }
@@ -131,12 +156,39 @@ namespace Apartments_API.Controllers
                 return BadRequest();
             }
             //if id is not zero, we can try to retrieve apartment from apartment list
-            var apartment = ApartmentStore.apartmentList.FirstOrDefault(u=>u.Id==id);
+            var apartment = _db.Apartments.FirstOrDefault(u=>u.Id==id);
+            //type is apartmentDTO so we have to convert
+            ApartmentDTO apartmentDTO = new()
+            {
+                Amenity = apartment.Amenity,
+                Details = apartment.Details,
+                Id = apartment.Id,
+                ImagePath = apartment.ImagePath,
+                Name = apartment.Name,
+                Occupancy = apartment.Occupancy,
+                Rate = apartment.Rate,
+                SquareFeet = apartment.SquareFeet
+            };
+
             if (apartment == null)
             {
                 return BadRequest();
             }
-            patchDTO.ApplyTo(apartment, ModelState);
+            patchDTO.ApplyTo(apartmentDTO, ModelState);
+            Apartment model = new Apartment()
+            {
+                Amenity = apartmentDTO.Amenity,
+                Details = apartmentDTO.Details,
+                Id = apartmentDTO.Id,
+                ImagePath = apartmentDTO.ImagePath,
+                Name = apartmentDTO.Name,
+                Occupancy = apartmentDTO.Occupancy,
+                Rate = apartmentDTO.Rate,
+                SquareFeet = apartmentDTO.SquareFeet
+            };
+
+            _db.Apartments.Update(model);
+            _db.SaveChanges();
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);

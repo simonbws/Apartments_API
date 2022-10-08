@@ -1,6 +1,4 @@
 
-
-
 using Apartment_API.Database;
 using Microsoft.EntityFrameworkCore;
 
