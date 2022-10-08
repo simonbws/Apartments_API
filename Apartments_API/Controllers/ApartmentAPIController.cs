@@ -3,6 +3,7 @@ using Apartments_API.Models;
 using Apartments_API.Models.DTO;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace Apartments_API.Controllers
 {
@@ -155,8 +156,10 @@ namespace Apartments_API.Controllers
             {
                 return BadRequest();
             }
+
             //if id is not zero, we can try to retrieve apartment from apartment list
-            var apartment = _db.Apartments.FirstOrDefault(u=>u.Id==id);
+            var apartment = _db.Apartments.AsNoTracking().FirstOrDefault(u=>u.Id==id);
+           
             //type is apartmentDTO so we have to convert
             ApartmentDTO apartmentDTO = new()
             {
