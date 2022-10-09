@@ -1,4 +1,5 @@
 ﻿using Apartment_API.Database;
+using Apartment_API.Repository.IRepository;
 using Apartments_API.Models;
 using Apartments_API.Models.DTO;
 using AutoMapper;
@@ -13,13 +14,13 @@ namespace Apartments_API.Controllers
     [ApiController]
     public class ApartmentAPIController : ControllerBase
     {
-        private readonly AppDbContext _db;
+        private readonly IApartmentRepository _dbApartment;
         private readonly IMapper _mapper;
 
-        public ApartmentAPIController(AppDbContext db, IMapper mapper)
+        public ApartmentAPIController(IApartmentRepository dbApartment, IMapper mapper)
         {
-            
-            _db = db;
+
+            _dbApartment = dbApartment;
             _mapper = mapper;
         }
 
@@ -27,8 +28,8 @@ namespace Apartments_API.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task <ActionResult <IEnumerable<ApartmentDTO>>> GetApartments()
         {
-            //type is ApartmentDTO so we have to map and convert that and get list
-            IEnumerable<Apartment> apartmentList = await _db.Apartments.ToListAsync();
+            
+            IEnumerable<Apartment> apartmentList = await _dbApartment.GetAllAsync();
             //we need to now convert that to villa dto, destination type is apartDTO and in
             //parameter we need to pass object which is apartmentList
             return Ok(_mapper.Map<List<ApartmentDTO>>(apartmentList));
@@ -45,7 +46,7 @@ namespace Apartments_API.Controllers
                 
                 return BadRequest();
             }
-            var apartment = await _db.Apartments.FirstOrDefaultAsync(u => u.Id == id);
+            var apartment = await _dbApartment.GetAsync(u => u.Id == id);
             if (apartment == null)
             {
                 return NotFound();
@@ -64,7 +65,7 @@ namespace Apartments_API.Controllers
             //{
             //    return BadRequest(ModelState);
             //}
-            if (await _db.Apartments.FirstOrDefaultAsync(u => u.Name.ToLower() == createDTO.Name.ToLower()) != null)
+            if (await _dbApartment.GetAsync(u => u.Name.ToLower() == createDTO.Name.ToLower()) != null)
             {
                 ModelState.AddModelError("CustomError", "Apartment already exist!");
                 return BadRequest(ModelState);
@@ -90,9 +91,7 @@ namespace Apartments_API.Controllers
             //    Rate = createDTO.Rate,
             //    SquareFeet = createDTO.SquareFeet
             //};
-            await _db.Apartments.AddAsync(model);
-            await _db.SaveChangesAsync();
-
+            await _dbApartment.CreateAsync(model);
             return CreatedAtRoute("GetApartment", new { id = model.Id },model);
         }
         [ProducesResponseType(StatusCodes.Status204NoContent)]
@@ -108,15 +107,14 @@ namespace Apartments_API.Controllers
             }
             //if is not equal to zero, then from the villa store, we will use first or default
             //and retrieve villa that we have to deleete
-            var apartment = await _db.Apartments.FirstOrDefaultAsync(u => u.Id == id);
+            var apartment = await _dbApartment.GetAsync(u => u.Id == id);
             if (apartment == null)
             {
                 return NotFound();
             }
             //if we do find apartment, then we will use apartmentstore, remove and we will
             //pass apartment which we want to remove
-            _db.Apartments.Remove(apartment);
-            await _db.SaveChangesAsync();
+            await _dbApartment.RemoveAsync(apartment);         
             return NoContent();
         }
 
@@ -136,8 +134,7 @@ namespace Apartments_API.Controllers
             
             Apartment model = _mapper.Map<Apartment>(updateDTO);
 
-            _db.Apartments.Update(model);
-            await _db.SaveChangesAsync();
+            await _dbApartment.UpdateAsync(model);      
             return NoContent();
 
         }
@@ -153,7 +150,7 @@ namespace Apartments_API.Controllers
             }
 
             //if id is not zero, we can try to retrieve apartment from apartment list
-            var apartment = await _db.Apartments.AsNoTracking().FirstOrDefaultAsync(u=>u.Id==id);
+            var apartment = await _dbApartment.GetAsync(u=>u.Id==id, tracked:false);
 
             //type is apartmentDTO so we have to convert
             ApartmentUpdateDTO apartmentDTO = _mapper.Map<ApartmentUpdateDTO>(apartment);
@@ -164,10 +161,9 @@ namespace Apartments_API.Controllers
                 return BadRequest();
             }
             patchDTO.ApplyTo(apartmentDTO, ModelState);
-            Apartment model = _mapper.Map<Apartment>(apartmentDTO);     
+            Apartment model = _mapper.Map<Apartment>(apartmentDTO);
 
-            _db.Apartments.Update(model);
-            await _db.SaveChangesAsync();
+            await _dbApartment.UpdateAsync(model);
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
