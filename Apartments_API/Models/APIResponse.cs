@@ -6,7 +6,7 @@ namespace Apartment_API.Models
     {
         public HttpStatusCode StatusCode { get; set; }
 
-        public bool isSuccess { get; set; }
+        public bool isSuccess { get; set; } = true;
         public List<string> Errors { get; set; }
 
         public object Result { get; set; }
