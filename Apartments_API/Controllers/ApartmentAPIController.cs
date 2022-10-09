@@ -1,9 +1,11 @@
 ﻿using Apartment_API.Database;
 using Apartments_API.Models;
 using Apartments_API.Models.DTO;
+using AutoMapper;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
 
 namespace Apartments_API.Controllers
 {
@@ -12,18 +14,24 @@ namespace Apartments_API.Controllers
     public class ApartmentAPIController : ControllerBase
     {
         private readonly AppDbContext _db;
+        private readonly IMapper _mapper;
 
-        public ApartmentAPIController(AppDbContext db)
+        public ApartmentAPIController(AppDbContext db, IMapper mapper)
         {
+            
             _db = db;
+            _mapper = mapper;
         }
 
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task <ActionResult <IEnumerable<ApartmentDTO>>> GetApartments()
         {
-            
-            return Ok(await _db.Apartments.ToListAsync());
+            //type is ApartmentDTO so we have to map and convert that and get list
+            IEnumerable<Apartment> apartmentList = await _db.Apartments.ToListAsync();
+            //we need to now convert that to villa dto, destination type is apartDTO and in
+            //parameter we need to pass object which is apartmentList
+            return Ok(_mapper.Map<List<ApartmentDTO>>(apartmentList));
             
         }
         [HttpGet("{id:int}", Name ="GetApartment")]
@@ -42,7 +50,7 @@ namespace Apartments_API.Controllers
             {
                 return NotFound();
             }
-            return Ok(apartment);
+            return Ok(_mapper.Map<ApartmentDTO>(apartment));
 
         }
 
@@ -50,35 +58,38 @@ namespace Apartments_API.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<ApartmentDTO>> CreateApartment([FromBody]ApartmentCreateDTO apartmentDTO)
+        public async Task<ActionResult<ApartmentDTO>> CreateApartment([FromBody]ApartmentCreateDTO createDTO)
         {
             //if (!ModelState.IsValid)
             //{
             //    return BadRequest(ModelState);
             //}
-            if (await _db.Apartments.FirstOrDefaultAsync(u => u.Name.ToLower() == apartmentDTO.Name.ToLower()) != null)
+            if (await _db.Apartments.FirstOrDefaultAsync(u => u.Name.ToLower() == createDTO.Name.ToLower()) != null)
             {
                 ModelState.AddModelError("CustomError", "Apartment already exist!");
                 return BadRequest(ModelState);
             }
-            if (apartmentDTO == null)
+            if (createDTO == null)
             {
-                return BadRequest(apartmentDTO);
+                return BadRequest(createDTO);
             }
             //if (apartmentDTO.Id > 0)
             //{
             //    return StatusCode(StatusCodes.Status500InternalServerError);
             //}
-            Apartment model = new()
-            {
-                Amenity = apartmentDTO.Amenity,
-                Details = apartmentDTO.Details,       
-                ImagePath = apartmentDTO.ImagePath,
-                Name = apartmentDTO.Name,
-                Occupancy = apartmentDTO.Occupancy,
-                Rate = apartmentDTO.Rate,
-                SquareFeet = apartmentDTO.SquareFeet
-            };
+            //now we need to do conversion, output is Apartment, input createDTO
+            Apartment model = _mapper.Map<Apartment>(createDTO);
+            //that will do the mapping, we do not need to this properties below (commented)
+            //Apartment model = new()
+            //{
+            //    Amenity = createDTO.Amenity,
+            //    Details = createDTO.Details,       
+            //    ImagePath = createDTO.ImagePath,
+            //    Name = createDTO.Name,
+            //    Occupancy = createDTO.Occupancy,
+            //    Rate = createDTO.Rate,
+            //    SquareFeet = createDTO.SquareFeet
+            //};
             await _db.Apartments.AddAsync(model);
             await _db.SaveChangesAsync();
 
@@ -114,32 +125,17 @@ namespace Apartments_API.Controllers
         [ProducesResponseType(StatusCodes.Status204NoContent)]     
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         //we need to pass int i, we want to update, and complete object from body ( apartmentdto)
-        public async Task<IActionResult> UpdateApartment(int id, [FromBody]ApartmentUpdateDTO apartmentDTO)
+        public async Task<IActionResult> UpdateApartment(int id, [FromBody]ApartmentUpdateDTO updateDTO)
         {
             //we want to check if aprtm is null or id which we pass from method IActionResult
             //is not the same with that which we pass from the object apartmentDTO
-            if(apartmentDTO == null || id !=apartmentDTO.Id)
+            if(updateDTO == null || id != updateDTO.Id)
             {
                 return BadRequest();
             }
-            //we need to retrieve based on the id which we passed into method
-            //var apartment = ApartmentStore.apartmentList.FirstOrDefault(u=>u.Id == id);
-            ////now we update square feet and occupancy based on the apartmentDTO
-            //apartment.Name = apartmentDTO.Name;
-            //apartment.SquareFeet = apartmentDTO.SquareFeet;
-            //apartment.Occupancy = apartmentDTO.Occupancy;
-            //we need to convert apartmentDTO to apartment object
-            Apartment model = new()
-            {
-                Amenity = apartmentDTO.Amenity,
-                Details = apartmentDTO.Details,
-                Id = apartmentDTO.Id,
-                ImagePath = apartmentDTO.ImagePath,
-                Name = apartmentDTO.Name,
-                Occupancy = apartmentDTO.Occupancy,
-                Rate = apartmentDTO.Rate,
-                SquareFeet = apartmentDTO.SquareFeet
-            };
+            
+            Apartment model = _mapper.Map<Apartment>(updateDTO);
+
             _db.Apartments.Update(model);
             await _db.SaveChangesAsync();
             return NoContent();
@@ -160,34 +156,15 @@ namespace Apartments_API.Controllers
             var apartment = await _db.Apartments.AsNoTracking().FirstOrDefaultAsync(u=>u.Id==id);
 
             //type is apartmentDTO so we have to convert
-            ApartmentUpdateDTO apartmentDTO = new()
-            {
-                Amenity = apartment.Amenity,
-                Details = apartment.Details,
-                Id = apartment.Id,
-                ImagePath = apartment.ImagePath,
-                Name = apartment.Name,
-                Occupancy = apartment.Occupancy,
-                Rate = apartment.Rate,
-                SquareFeet = apartment.SquareFeet
-            };
+            ApartmentUpdateDTO apartmentDTO = _mapper.Map<ApartmentUpdateDTO>(apartment);
+           
 
             if (apartment == null)
             {
                 return BadRequest();
             }
             patchDTO.ApplyTo(apartmentDTO, ModelState);
-            Apartment model = new Apartment()
-            {
-                Amenity = apartmentDTO.Amenity,
-                Details = apartmentDTO.Details,
-                Id = apartmentDTO.Id,
-                ImagePath = apartmentDTO.ImagePath,
-                Name = apartmentDTO.Name,
-                Occupancy = apartmentDTO.Occupancy,
-                Rate = apartmentDTO.Rate,
-                SquareFeet = apartmentDTO.SquareFeet
-            };
+            Apartment model = _mapper.Map<Apartment>(apartmentDTO);     
 
             _db.Apartments.Update(model);
             await _db.SaveChangesAsync();
