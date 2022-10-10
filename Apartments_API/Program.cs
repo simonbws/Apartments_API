@@ -12,6 +12,8 @@ builder.Services.AddDbContext<AppDbContext>(option =>
     option.UseSqlServer(builder.Configuration.GetConnectionString("DefaultSQLConnection"));
 });
 builder.Services.AddScoped<IApartmentRepository, ApartmentRepository>();
+//we register repository in dependency injection
+builder.Services.AddScoped<IApartmentNumberRepository,ApartmentNumberRepository>(); // interface and implementation of the interface
 builder.Services.AddAutoMapper(typeof(MapProperties)); // this ensures transfer even 50 or more 
 //mappings into config file
 

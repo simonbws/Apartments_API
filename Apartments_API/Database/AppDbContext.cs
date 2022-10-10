@@ -1,4 +1,5 @@
-﻿using Apartments_API.Models;
+﻿using Apartment_API.Models;
+using Apartments_API.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace Apartment_API.Database
@@ -7,10 +8,11 @@ namespace Apartment_API.Database
     public class AppDbContext : DbContext
     {
         public AppDbContext(DbContextOptions<AppDbContext> options)
-            : base(options)
+           : base(options)
         {
         }
         public DbSet<Apartment> Apartments { get; set; } //name of the table
+        public DbSet<ApartmentNumber> ApartmentNumbers { get; set; } //name of the table
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
