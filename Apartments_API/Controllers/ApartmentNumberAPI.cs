@@ -18,13 +18,16 @@ namespace Apartments_API.Controllers
     {
         protected APIResponse _response;
         private readonly IApartmentNumberRepository _dbApartmentNumber;
+        private readonly IApartmentRepository _dbApartment;
         private readonly IMapper _mapper;
 
-        public ApartmentNumberAPIController(IApartmentNumberRepository dbApartmentNumber, IMapper mapper)
+        public ApartmentNumberAPIController(IApartmentNumberRepository dbApartmentNumber, IMapper mapper, IApartmentRepository dbApartment)
         {
             _dbApartmentNumber = dbApartmentNumber;
             _mapper = mapper;
             this._response = new();
+            _dbApartment = dbApartment;
+
         }
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -93,6 +96,11 @@ namespace Apartments_API.Controllers
                     ModelState.AddModelError("CustomError", "Apartment Number already exist!");
                     return BadRequest(ModelState);
                 }
+                if (await _dbApartment.GetAsync(u => u.Id == createDTO.ApartmentID) == null)
+                {
+                    ModelState.AddModelError("CustomError", "Apartment ID is Invalid!");
+                    return BadRequest(ModelState);
+                }
                 if (createDTO == null)
                 {
                     return BadRequest(createDTO);
@@ -155,6 +163,11 @@ namespace Apartments_API.Controllers
                 if (updateDTO == null || id != updateDTO.ApartmentNo)
                 {
                     return BadRequest();
+                }
+                if (await _dbApartment.GetAsync(u => u.Id == updateDTO.ApartmentID) == null)
+                {
+                    ModelState.AddModelError("CustomError", "Apartment ID is Invalid!");
+                    return BadRequest(ModelState);
                 }
 
                 ApartmentNumber model = _mapper.Map<ApartmentNumber>(updateDTO);
