@@ -4,6 +4,7 @@ using Apartment_Web.Services.IServices;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using System.Collections.Generic;
 
 namespace Apartment_Web.Controllers
 {
@@ -30,6 +31,27 @@ namespace Apartment_Web.Controllers
             }
             return View(list);
             
+        }
+        public async Task<IActionResult> CreateApartment()
+        {
+            
+            return View();
+
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> CreateApartment(ApartmentCreateDTO model)
+        {
+            if (ModelState.IsValid)
+            {
+                var response = await _apartmentService.CreateAsync<APIResponse>(model);
+                if (response != null && response.isSuccess)
+                {
+                    return RedirectToAction(nameof(IndexApartment));
+                }
+            }
+            return View(model);
+
         }
     }
 }

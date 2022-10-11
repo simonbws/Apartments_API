@@ -9,6 +9,7 @@ namespace Apartments_API.Models
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)] // this manage automaticlly id for us
         public int Id { get; set; }
+        [Required]
         public string Name { get; set; }
         public string Details { get; set; }
         public double Rate { get; set; }
