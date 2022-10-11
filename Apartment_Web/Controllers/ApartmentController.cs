@@ -5,6 +5,7 @@ using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using System.Collections.Generic;
+using System.Reflection;
 
 namespace Apartment_Web.Controllers
 {
@@ -50,6 +51,42 @@ namespace Apartment_Web.Controllers
                     return RedirectToAction(nameof(IndexApartment));
                 }
             }
+            return View(model);
+
+        }
+
+        public async Task<IActionResult> UpdateApartment(int apartmentId) // we will get aprt id
+        {
+            //then we will pass that id
+            var response = await _apartmentService.GetAsync<APIResponse>(apartmentId);
+            //and we will retrieve the complete apartment
+            if (response != null && response.isSuccess)
+            {
+                //we will desiarlize that to convert to string first
+                ApartmentDTO model = JsonConvert.DeserializeObject<ApartmentDTO>(Convert.ToString(response.Result));
+                //before we return back to the view, we can convert that using automapper to apartmentupdateDTO
+                return View(_mapper.Map<ApartmentUpdateDTO>(model));
+                //if the response is null we return notfound
+            }
+            return NotFound();
+
+
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> UpdateApartment(ApartmentUpdateDTO model)
+        {
+            if (ModelState.IsValid)
+            {
+                var response = await _apartmentService.UpdateAsync<APIResponse>(model);
+                if (response != null && response.isSuccess)
+                {
+                    //we redirect back to index apartment
+                    return RedirectToAction(nameof(IndexApartment));
+                }
+
+            }
+            //else we return back if the model state is not valid
             return View(model);
 
         }
