@@ -90,5 +90,41 @@ namespace Apartment_Web.Controllers
             return View(model);
 
         }
+
+
+        public async Task<IActionResult> DeleteApartment(int apartmentId) // we will get aprt id
+        {
+            //then we will pass that id
+            var response = await _apartmentService.GetAsync<APIResponse>(apartmentId);
+            //and we will retrieve the complete apartment
+            if (response != null && response.isSuccess)
+            {
+                //we will desiarlize that to convert to string first
+                ApartmentDTO model = JsonConvert.DeserializeObject<ApartmentDTO>(Convert.ToString(response.Result));
+                //before we return back to the view, we can convert that using automapper to apartmentupdateDTO
+                return View(model);
+                //if the response is null we return notfound
+            }
+            return NotFound();
+
+
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteApartment(ApartmentDTO model)
+        {
+           
+                var response = await _apartmentService.DeleteAsync<APIResponse>(model.Id);
+                if (response != null && response.isSuccess)
+                {
+                    //we redirect back to index apartment
+                    return RedirectToAction(nameof(IndexApartment));
+                }
+
+            
+            //else we return back if the model state is not valid
+            return View(model);
+
+        }
     }
 }
