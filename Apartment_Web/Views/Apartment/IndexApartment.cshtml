@@ -1,0 +1,44 @@
+﻿@model IEnumerable<Apartment_Web.Models.DTO.ApartmentDTO>
+<br />
+<div class="container p-7 border">
+    <div class="row pb-2">
+        <div class="col-2">
+            <h1 class="text-primary"> Apartments</h1>
+        </div>
+        <div class="col text-end pt-1">
+            <a asp-controller="Apartment" asp-action="CreateApartment" class="btn btn-outline-primary"> <i class="bi bi-plus-square-fill"></i> Create new Apartment</a>
+        </div>
+    </div>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    Name
+                </th>
+                <th>
+                    Occupancy
+                </th>
+                <th>
+                    Price
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.Name</td>
+                    <td>@item.Occupancy</td>
+                    <td>@((item.Rate).ToString("c"))</td>
+                    <td>
+                        <a asp-controller="Apartment" asp-action="UpdateApartment" class="btn btn-success"><i class="bi bi-pencil-square"></i> Update</a>
+                        <a asp-controller="Apartment" asp-action="DeleteApartment" class="btn btn-danger"><i class="bi bi-file-x-fill"></i> Delete</a>
+
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
