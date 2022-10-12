@@ -10,5 +10,7 @@ namespace Apartment_Web.Models.DTO
         public int ApartmentID { get; set; }
         public string SpecialProperties { get; set; }
 
+        public ApartmentDTO Apartment { get; set; }
+
     }
 }
