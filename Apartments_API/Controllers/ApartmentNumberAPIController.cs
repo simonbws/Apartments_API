@@ -36,7 +36,7 @@ namespace Apartments_API.Controllers
         {
             try
             {
-                IEnumerable<ApartmentNumber> apartmentNumberList = await _dbApartmentNumber.GetAllAsync();
+                IEnumerable<ApartmentNumber> apartmentNumberList = await _dbApartmentNumber.GetAllAsync(includeProperties:"Apartment");
                 _response.Result = _mapper.Map<List<ApartmentNumberDTO>>(apartmentNumberList);
                 _response.StatusCode = HttpStatusCode.OK;
                 return Ok(_response);

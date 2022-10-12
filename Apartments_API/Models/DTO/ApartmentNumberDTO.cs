@@ -9,6 +9,7 @@ namespace Apartments_API.Models.DTO
         [Required]
         public int ApartmentID { get; set; }
         public string SpecialProperties { get; set; }
+        public ApartmentDTO Apartment { get; set; }
 
     }
 }

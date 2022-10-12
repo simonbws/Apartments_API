@@ -5,8 +5,8 @@ namespace Apartment_API.Repository.IRepository
 {
     public interface IRepository<T> where T : class
     {
-        Task<List<T>> GetAllAsync(Expression<Func<T, bool>>? filter = null);
-        Task<T> GetAsync(Expression<Func<T, bool>> filter = null, bool tracked = true); // dont need to be null
+        Task<List<T>> GetAllAsync(Expression<Func<T, bool>>? filter = null, string? includeProperties = null); // nullable property because its possible you dont need this all time
+        Task<T> GetAsync(Expression<Func<T, bool>> filter = null, bool tracked = true, string? includeProperties = null); // dont need to be null
         //because we are retrieving only one condition
         Task CreateAsync(T entity);
         Task RemoveAsync(T entity);
