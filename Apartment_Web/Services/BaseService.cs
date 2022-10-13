@@ -2,6 +2,7 @@
 using Apartment_Web.Models;
 using Apartment_Web.Services.IServices;
 using Newtonsoft.Json;
+using System.Runtime.InteropServices;
 using System.Text;
 
 namespace Apartment_Web.Services
@@ -47,6 +48,24 @@ namespace Apartment_Web.Services
                 apiResponse = await client.SendAsync(message);
 
                 var apiContent = await apiResponse.Content.ReadAsStringAsync();
+                try
+                {
+                    APIResponse ApiResponse = JsonConvert.DeserializeObject<APIResponse>(apiContent);
+                    if (apiResponse.StatusCode == System.Net.HttpStatusCode.BadRequest || apiResponse.StatusCode
+                        == System.Net.HttpStatusCode.NotFound)
+                    {
+                        ApiResponse.StatusCode = System.Net.HttpStatusCode.BadRequest;
+                        ApiResponse.isSuccess = false;
+                        var res = JsonConvert.SerializeObject(ApiResponse);
+                        var returnObject = JsonConvert.DeserializeObject<T>(res);
+                        return returnObject;
+                    }
+                }
+                catch (Exception e)
+                {
+                    var exceptionResponse = JsonConvert.DeserializeObject<T>(apiContent);
+                    return exceptionResponse;
+                }
                 var APIResponse = JsonConvert.DeserializeObject<T>(apiContent);
                 return APIResponse;
             }
