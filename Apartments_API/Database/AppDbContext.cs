@@ -11,6 +11,7 @@ namespace Apartment_API.Database
            : base(options)
         {
         }
+        public DbSet<LocalUser> LocalUsers { get; set; }
         public DbSet<Apartment> Apartments { get; set; } //name of the table
         public DbSet<ApartmentNumber> ApartmentNumbers { get; set; } //name of the table
 
