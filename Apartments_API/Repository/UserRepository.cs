@@ -11,12 +11,17 @@ namespace Apartment_API.Repository
 
         public UserRepository(AppDbContext db)
         {
-            _db = db;
+            
         }
 
         public bool isUniqueUser(string username)
         {
-            throw new NotImplementedException();
+            var user = _db.LocalUsers.FirstOrDefault(x => x.UserName == username);
+            if (user == null)
+            {
+                return true;
+            }
+            return false;
         }
 
         public Task<LoginResponseDTO> Login(LoginRequestDTO loginRequest)
@@ -24,9 +29,22 @@ namespace Apartment_API.Repository
             throw new NotImplementedException();
         }
 
-        public Task<LocalUser> Register(RegisterRequestDTO registerRequestDTO)
+        public async Task<LocalUser> Register(RegisterRequestDTO registerRequestDTO)
         {
-            throw new NotImplementedException();
+            //here we are adding the user, here we doing everything to register the new user
+            LocalUser user = new()
+            {
+                UserName = registerRequestDTO.UserName,
+                Password = registerRequestDTO.Password,
+                Name = registerRequestDTO.Name,
+                Role = registerRequestDTO.Role
+
+            };
+            _db.LocalUsers.Add(user);
+            await _db.SaveChangesAsync();
+            user.Password = "";
+            return user;
+
         }
     }
 }
