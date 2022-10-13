@@ -96,23 +96,20 @@ namespace Apartment_Web.Controllers
 
         }
 
-        public async Task<IActionResult> UpdateApartmentNumber(int apartmentId) // we will get aprt id
+        public async Task<IActionResult> UpdateApartmentNumber(int apartmentNo ) // we will get aprt id
         {
             ApartmentNumberUpdateViewModel apartmentNumberViewModel = new();
             //then we will pass that id
-            var response = await _apartmentNumberService.GetAsync<APIResponse>(apartmentId);
+            var response = await _apartmentNumberService.GetAsync<APIResponse>(apartmentNo);
             //and we will retrieve the complete apartment
             if (response != null && response.isSuccess)
             {
                 //we will desiarlize that to convert to string first
                 ApartmentNumberDTO model = JsonConvert.DeserializeObject<ApartmentNumberDTO>(Convert.ToString(response.Result));
                 apartmentNumberViewModel.ApartmentNumber =  _mapper.Map<ApartmentNumberUpdateDTO>(model);
-                //before we return back to the view, we can convert that using automapper to apartmentupdateDTO
-                
+                //before we return back to the view, we can convert that using automapper to apartmentupdateDTO            
                 //if the response is null we return notfound
             }
-
-
             response = await _apartmentService.GetAllAsync<APIResponse>();
             if (response != null && response.isSuccess)
             {
@@ -127,7 +124,6 @@ namespace Apartment_Web.Controllers
                 return View(apartmentNumberViewModel);
             }
             return NotFound();
-
 
         }
         [HttpPost]
@@ -165,18 +161,16 @@ namespace Apartment_Web.Controllers
 
             }
             return View(model);
-
         }
 
-
-        public async Task<IActionResult> DeleteApartmentNumber(int apartmentId) // we will get aprt id
+        public async Task<IActionResult> DeleteApartmentNumber(int apartmentNo) // we will get aprt id
         {
-            ApartmentNumberUpdateViewModel apartmentNumberViewModel = new();
-            var response = await _apartmentNumberService.GetAsync<APIResponse>(apartmentId);
+            ApartmentNumberDeleteViewModel apartmentNumberViewModel = new();
+            var response = await _apartmentNumberService.GetAsync<APIResponse>(apartmentNo);
             if (response != null && response.isSuccess)
             {
                 ApartmentNumberDTO model = JsonConvert.DeserializeObject<ApartmentNumberDTO>(Convert.ToString(response.Result));
-                apartmentNumberViewModel.ApartmentNumber = _mapper.Map<ApartmentNumberUpdateDTO>(model);
+                apartmentNumberViewModel.ApartmentNumber = model;
             }
             response = await _apartmentService.GetAllAsync<APIResponse>();
             if (response != null && response.isSuccess)

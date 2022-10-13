@@ -47,10 +47,13 @@ namespace Apartment_Web.Controllers
             {
                 var response = await _apartmentService.CreateAsync<APIResponse>(model);
                 if (response != null && response.isSuccess)
+
                 {
+                    TempData["success"] = "Apartment has been created";
                     return RedirectToAction(nameof(IndexApartment));
                 }
             }
+            TempData["ERROR"] = "Error. Please check if everything is okay.";
             return View(model);
 
         }
@@ -62,6 +65,7 @@ namespace Apartment_Web.Controllers
             //and we will retrieve the complete apartment
             if (response != null && response.isSuccess)
             {
+                
                 //we will desiarlize that to convert to string first
                 ApartmentDTO model = JsonConvert.DeserializeObject<ApartmentDTO>(Convert.ToString(response.Result));
                 //before we return back to the view, we can convert that using automapper to apartmentupdateDTO
@@ -78,14 +82,16 @@ namespace Apartment_Web.Controllers
         {
             if (ModelState.IsValid)
             {
+                TempData["success"] = "Apartment has been updated";
                 var response = await _apartmentService.UpdateAsync<APIResponse>(model);
                 if (response != null && response.isSuccess)
                 {
                     //we redirect back to index apartment
                     return RedirectToAction(nameof(IndexApartment));
                 }
-
+                
             }
+            TempData["ERROR"] = "Error. Please check if everything is okay.";
             //else we return back if the model state is not valid
             return View(model);
 
@@ -117,11 +123,11 @@ namespace Apartment_Web.Controllers
                 var response = await _apartmentService.DeleteAsync<APIResponse>(model.Id);
                 if (response != null && response.isSuccess)
                 {
-                    //we redirect back to index apartment
-                    return RedirectToAction(nameof(IndexApartment));
+                TempData["success"] = "Apartment has been removed";
+                //we redirect back to index apartment
+                return RedirectToAction(nameof(IndexApartment));
                 }
-
-            
+            TempData["ERROR"] = "Error. Please check if everything is okay.";
             //else we return back if the model state is not valid
             return View(model);
 
