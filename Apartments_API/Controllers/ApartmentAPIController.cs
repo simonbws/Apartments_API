@@ -4,6 +4,7 @@ using Apartment_API.Repository.IRepository;
 using Apartments_API.Models;
 using Apartments_API.Models.DTO;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -29,6 +30,7 @@ namespace Apartments_API.Controllers
         }
 
         [HttpGet]
+        [Authorize] // only authorize user is able to access this endpoint
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult<APIResponse>> GetApartments()
         {
@@ -50,6 +52,7 @@ namespace Apartments_API.Controllers
             return _response;
 
         }
+        [Authorize(Roles = "admin")]
         [HttpGet("{id:int}", Name = "GetApartment")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -83,7 +86,7 @@ namespace Apartments_API.Controllers
         }
 
 
-        [HttpPost]
+        [HttpPost]    
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -139,6 +142,7 @@ namespace Apartments_API.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [HttpDelete("{id:int}", Name = "DeleteApartment")]
+        [Authorize(Roles = "Custom")]
 
         public async Task<ActionResult<APIResponse>> DeleteApartment(int id)
         {
