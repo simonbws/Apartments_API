@@ -43,7 +43,7 @@ namespace Apartment_API.Controllers
             {
                 _response.StatusCode = HttpStatusCode.BadRequest;
                 _response.isSuccess = false;
-                _response.Errors.Add("Sorry, UserName already exists!");
+                _response.Errors.Add("Sorry, Username already exists!");
                 return BadRequest(_response);
             }
             var user = await _userRepository.Register(model);
@@ -54,6 +54,8 @@ namespace Apartment_API.Controllers
                 _response.Errors.Add("Error while register");
                 return BadRequest(_response);
             }
+            _response.StatusCode = HttpStatusCode.OK;
+            _response.isSuccess = true;
             return Ok(_response);
         }
     }

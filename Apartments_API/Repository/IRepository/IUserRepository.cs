@@ -6,7 +6,7 @@ namespace Apartment_API.Repository.IRepository
     public interface IUserRepository
     {
         bool isUniqueUser(string username);
-        Task<LoginResponseDTO> Login(LoginRequestDTO loginRequest);
+        Task<LoginResponseDTO> Login(LoginRequestDTO loginRequestDTO);
         Task<LocalUser> Register(RegisterRequestDTO registerRequestDTO);
     }
 }

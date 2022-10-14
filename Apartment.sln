@@ -5,9 +5,9 @@ VisualStudioVersion = 17.3.32819.101
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Apartment_API", "Apartments_API\Apartment_API.csproj", "{B943481C-8F63-4DDA-8BBB-1301DE706AA3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Apartment_Web", "Apartment_Web\Apartment_Web.csproj", "{6F7E41F2-2C7C-4475-9285-ADD65951A620}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Apartment_Web", "Apartment_Web\Apartment_Web.csproj", "{6F7E41F2-2C7C-4475-9285-ADD65951A620}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Apartment_Utility", "Apartment_Utility\Apartment_Utility.csproj", "{CB7AD647-DA79-4D47-AF38-D9FBC96AA1D8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Apartment_Utility", "Apartment_Utility\Apartment_Utility.csproj", "{CB7AD647-DA79-4D47-AF38-D9FBC96AA1D8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
