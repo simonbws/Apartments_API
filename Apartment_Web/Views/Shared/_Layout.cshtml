@@ -1,4 +1,7 @@
-﻿<!DOCTYPE html>
+﻿@using Apartment_Utility
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor httpAccess
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -30,6 +33,23 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="ApartmentNumber" asp-action="IndexApartmentNumber">Apartment Number</a>
                         </li>
+                        @if (httpAccess.HttpContext.Session.GetString(SD.SessionToken) != null &&
+                        httpAccess.HttpContext.Session.GetString(SD.SessionToken).ToString().Length > 0)
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-controller="Authorization" asp-action="LogOut">Log out</a>
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-controller="Authorization" asp-action="Login">Log in</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-controller="Authorization" asp-action="Register">Sing up</a>
+                            </li>
+                        }
+
                     </ul>
                 </div>
             </div>
