@@ -1,6 +1,8 @@
 using Apartment_Web;
 using Apartment_Web.Services;
 using Apartment_Web.Services.IServices;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using System.Net;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,7 +18,15 @@ builder.Services.AddScoped<IApartmentNumberService, ApartmentNumberService>();
 builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 builder.Services.AddHttpClient<IAuthorizationService, AuthorizationService>();
 builder.Services.AddScoped<IAuthorizationService, AuthorizationService>();
-
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+                .AddCookie(options =>
+                {
+                    options.Cookie.HttpOnly = true;
+                    options.ExpireTimeSpan = TimeSpan.FromMinutes(30);
+                    options.LoginPath = "/Authorization/Login"; // here we can override default path
+                    options.AccessDeniedPath = "/Authorization/AccessDenied";
+                    options.SlidingExpiration = true;
+                });
 builder.Services.AddSession(options =>
 {
     options.IdleTimeout = TimeSpan.FromMinutes(10);
@@ -39,7 +49,7 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
-
+app.UseAuthentication();
 app.UseAuthorization();
 app.UseSession();
 app.MapControllerRoute(

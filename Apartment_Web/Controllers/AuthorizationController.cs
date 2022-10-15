@@ -3,8 +3,10 @@ using Apartment_Web.Models;
 using Apartment_Web.Models.DTO;
 using Apartment_Web.Services.IServices;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using System.Security.Claims;
 
 namespace Apartment_Web.Controllers
 {
@@ -29,9 +31,17 @@ namespace Apartment_Web.Controllers
         {
             //we have auth service, inside there we have login async which expects loginrequests dto and that will return back apiresponse
             APIResponse response = await _authorizationService.LoginAsync<APIResponse>(obj);
+
             if (response != null && response.isSuccess)
             {
                 LoginResponseDTO model = JsonConvert.DeserializeObject<LoginResponseDTO>(Convert.ToString(response.Result));
+
+                var identity = new ClaimsIdentity(CookieAuthenticationDefaults.AuthenticationScheme);
+                identity.AddClaim(new Claim(ClaimTypes.Name, model.User.UserName));
+                identity.AddClaim(new Claim(ClaimTypes.Role, model.User.Role));
+                var principal = new ClaimsPrincipal(identity);
+                await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
+
                 HttpContext.Session.SetString(SD.SessionToken, model.Token);
                 return RedirectToAction("Index", "Home");
             }

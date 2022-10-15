@@ -2,6 +2,7 @@
 using Apartment_Web.Models.DTO;
 using Apartment_Web.Services.IServices;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using System.Collections.Generic;
@@ -33,12 +34,14 @@ namespace Apartment_Web.Controllers
             return View(list);
             
         }
+        [Authorize(Roles ="admin")]
         public async Task<IActionResult> CreateApartment()
         {
             
             return View();
 
         }
+        [Authorize(Roles = "admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> CreateApartment(ApartmentCreateDTO model)
@@ -57,7 +60,7 @@ namespace Apartment_Web.Controllers
             return View(model);
 
         }
-
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> UpdateApartment(int apartmentId) // we will get aprt id
         {
             //then we will pass that id
@@ -76,6 +79,7 @@ namespace Apartment_Web.Controllers
 
 
         }
+        [Authorize(Roles = "admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> UpdateApartment(ApartmentUpdateDTO model)
@@ -97,7 +101,7 @@ namespace Apartment_Web.Controllers
 
         }
 
-
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> DeleteApartment(int apartmentId) // we will get aprt id
         {
             //then we will pass that id
@@ -115,6 +119,7 @@ namespace Apartment_Web.Controllers
 
 
         }
+        [Authorize(Roles = "admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteApartment(ApartmentDTO model)
