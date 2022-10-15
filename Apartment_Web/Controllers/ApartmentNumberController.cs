@@ -1,4 +1,5 @@
-﻿using Apartment_Web.Models;
+﻿using Apartment_Utility;
+using Apartment_Web.Models;
 using Apartment_Web.Models.DTO;
 using Apartment_Web.Models.ViewModel;
 using Apartment_Web.Services;
@@ -30,7 +31,7 @@ namespace Apartment_Web.Controllers
         {
             List<ApartmentNumberDTO> list = new();
 
-            var response = await _apartmentNumberService.GetAllAsync<APIResponse>();
+            var response = await _apartmentNumberService.GetAllAsync<APIResponse>(HttpContext.Session.GetString(SD.SessionToken));
             if (response != null && response.isSuccess)
             {
                 //we convert that to string, then we deserialize that to list od apart dto and we assign that to list
@@ -49,7 +50,7 @@ namespace Apartment_Web.Controllers
         {
             ApartmentNumberCreateViewModel apartmentNumberViewModel = new();
 
-            var response = await _apartmentService.GetAllAsync<APIResponse>();
+            var response = await _apartmentService.GetAllAsync<APIResponse>(HttpContext.Session.GetString(SD.SessionToken));
             if (response != null && response.isSuccess)
             {
                 //we convert that to string, then we deserialize that to list od apart dto and we assign that to list
@@ -71,7 +72,7 @@ namespace Apartment_Web.Controllers
         {
             if (ModelState.IsValid)
             {
-                var response = await _apartmentNumberService.CreateAsync<APIResponse>(model.ApartmentNumber);
+                var response = await _apartmentNumberService.CreateAsync<APIResponse>(model.ApartmentNumber, HttpContext.Session.GetString(SD.SessionToken));
                 if (response != null && response.isSuccess)
                 {
                     return RedirectToAction(nameof(IndexApartmentNumber));
@@ -84,7 +85,7 @@ namespace Apartment_Web.Controllers
                     }
                 }
             }
-            var resp = await _apartmentService.GetAllAsync<APIResponse>();
+            var resp = await _apartmentService.GetAllAsync<APIResponse>(HttpContext.Session.GetString(SD.SessionToken));
             if (resp != null && resp.isSuccess)
             {
                 model.ApartmentList = JsonConvert.DeserializeObject<List<ApartmentDTO>>
@@ -92,7 +93,7 @@ namespace Apartment_Web.Controllers
                     {
                         Text = i.Name,
                         Value = i.Id.ToString()
-                    });
+                    }); 
 
             }
             return View(model);
@@ -103,7 +104,7 @@ namespace Apartment_Web.Controllers
         {
             ApartmentNumberUpdateViewModel apartmentNumberViewModel = new();
             //then we will pass that id
-            var response = await _apartmentNumberService.GetAsync<APIResponse>(apartmentNo);
+            var response = await _apartmentNumberService.GetAsync<APIResponse>(apartmentNo, HttpContext.Session.GetString(SD.SessionToken));
             //and we will retrieve the complete apartment
             if (response != null && response.isSuccess)
             {
@@ -113,7 +114,7 @@ namespace Apartment_Web.Controllers
                 //before we return back to the view, we can convert that using automapper to apartmentupdateDTO            
                 //if the response is null we return notfound
             }
-            response = await _apartmentService.GetAllAsync<APIResponse>();
+            response = await _apartmentService.GetAllAsync<APIResponse>(HttpContext.Session.GetString(SD.SessionToken));
             if (response != null && response.isSuccess)
             {
                 //we convert that to string, then we deserialize that to list od apart dto and we assign that to list
@@ -137,7 +138,7 @@ namespace Apartment_Web.Controllers
             if (ModelState.IsValid)
             {
                 //we update here
-                var response = await _apartmentNumberService.UpdateAsync<APIResponse>(model.ApartmentNumber);
+                var response = await _apartmentNumberService.UpdateAsync<APIResponse>(model.ApartmentNumber, HttpContext.Session.GetString(SD.SessionToken));
                 if (response != null && response.isSuccess)
                 {
                     //if everything is good we redirect back here
@@ -153,7 +154,7 @@ namespace Apartment_Web.Controllers
                 }
             }
             //and if anything is not valid we populate dropdown and redirect back
-            var resp = await _apartmentService.GetAllAsync<APIResponse>();
+            var resp = await _apartmentService.GetAllAsync<APIResponse>(HttpContext.Session.GetString(SD.SessionToken));
             if (resp != null && resp.isSuccess)
             {
                 model.ApartmentList = JsonConvert.DeserializeObject<List<ApartmentDTO>>
@@ -161,7 +162,7 @@ namespace Apartment_Web.Controllers
                     {
                         Text = i.Name,
                         Value = i.Id.ToString()
-                    });
+                    }); 
 
             }
             return View(model);
@@ -170,13 +171,13 @@ namespace Apartment_Web.Controllers
         public async Task<IActionResult> DeleteApartmentNumber(int apartmentNo) // we will get aprt id
         {
             ApartmentNumberDeleteViewModel apartmentNumberViewModel = new();
-            var response = await _apartmentNumberService.GetAsync<APIResponse>(apartmentNo);
+            var response = await _apartmentNumberService.GetAsync<APIResponse>(apartmentNo, HttpContext.Session.GetString(SD.SessionToken));
             if (response != null && response.isSuccess)
             {
                 ApartmentNumberDTO model = JsonConvert.DeserializeObject<ApartmentNumberDTO>(Convert.ToString(response.Result));
                 apartmentNumberViewModel.ApartmentNumber = model;
             }
-            response = await _apartmentService.GetAllAsync<APIResponse>();
+            response = await _apartmentService.GetAllAsync<APIResponse>(HttpContext.Session.GetString(SD.SessionToken));
             if (response != null && response.isSuccess)
             {            
                 apartmentNumberViewModel.ApartmentList = JsonConvert.DeserializeObject<List<ApartmentDTO>>
@@ -195,7 +196,7 @@ namespace Apartment_Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteApartmentNumber(ApartmentNumberDeleteViewModel model)
         {
-            var response = await _apartmentNumberService.DeleteAsync<APIResponse>(model.ApartmentNumber.ApartmentNo);
+            var response = await _apartmentNumberService.DeleteAsync<APIResponse>(model.ApartmentNumber.ApartmentNo, HttpContext.Session.GetString(SD.SessionToken));
             if (response != null && response.isSuccess)
             {
                 return RedirectToAction(nameof(IndexApartmentNumber));

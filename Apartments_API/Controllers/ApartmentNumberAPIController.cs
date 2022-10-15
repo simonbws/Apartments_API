@@ -4,10 +4,12 @@ using Apartment_API.Repository.IRepository;
 using Apartments_API.Models;
 using Apartments_API.Models.DTO;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
+using System.Data;
 using System.Net;
 
 namespace Apartments_API.Controllers
@@ -82,6 +84,7 @@ namespace Apartments_API.Controllers
             return _response;
 
         }
+        [Authorize(Roles = "admin")]
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -121,6 +124,7 @@ namespace Apartments_API.Controllers
             }
             return _response;
         }
+        [Authorize(Roles = "admin")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -152,6 +156,7 @@ namespace Apartments_API.Controllers
             }
             return _response;  
         }
+        [Authorize(Roles = "admin")]
         [HttpPut("{id:int}", Name = "UpdateApartmentNumber")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]

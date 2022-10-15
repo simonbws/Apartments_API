@@ -30,7 +30,7 @@ namespace Apartments_API.Controllers
         }
 
         [HttpGet]
-        [Authorize] // only authorize user is able to access this endpoint
+        // only authorize user is able to access this endpoint
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -54,7 +54,7 @@ namespace Apartments_API.Controllers
             return _response;
 
         }
-        [Authorize(Roles = "admin")]
+        
         [HttpGet("{id:int}", Name = "GetApartment")]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
@@ -90,7 +90,8 @@ namespace Apartments_API.Controllers
         }
 
 
-        [HttpPost]    
+        [HttpPost]
+        [Authorize(Roles = "admin")]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -148,7 +149,7 @@ namespace Apartments_API.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [HttpDelete("{id:int}", Name = "DeleteApartment")]
-        [Authorize(Roles = "CUSTOM")]
+        [Authorize(Roles = "admin")]
 
         public async Task<ActionResult<APIResponse>> DeleteApartment(int id)
         {
@@ -180,7 +181,7 @@ namespace Apartments_API.Controllers
             }
             return _response;  //_response is returned model
         }
-
+        [Authorize(Roles = "admin")]
         [HttpPut("{id:int}", Name = "UpdateApartment")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]

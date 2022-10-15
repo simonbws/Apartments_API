@@ -1,4 +1,5 @@
-﻿using Apartment_Web.Models;
+﻿using Apartment_Utility;
+using Apartment_Web.Models;
 using Apartment_Web.Models.DTO;
 using Apartment_Web.Services.IServices;
 using AutoMapper;
@@ -23,7 +24,7 @@ namespace Apartment_Web.Controllers
         {
             List<ApartmentDTO> list = new();
 
-            var response = await _apartmentService.GetAllAsync<APIResponse>();
+            var response = await _apartmentService.GetAllAsync<APIResponse>(HttpContext.Session.GetString(SD.SessionToken));
             if (response != null && response.isSuccess)
             {
                 //we convert that to string, then we deserialize that to list od apart dto and we assign that to list

@@ -18,50 +18,55 @@ namespace Apartment_Web.Services
             apartmentUrl = configuration.GetValue<string>("ServiceUrls:ApartmentAPI");
         }
 
-        public Task<T> CreateAsync<T>(ApartmentCreateDTO dto)
+        public Task<T> CreateAsync<T>(ApartmentCreateDTO dto, string token)
         {
             return SendAsync<T>(new APIRequest()
             {
                 ApiType = SD.ApiType.POST,
                 Data = dto,
-                URL = apartmentUrl + "/api/apartmentAPI"
+                URL = apartmentUrl + "/api/apartmentAPI",
+                Token = token
             });
         }
 
-        public Task<T> DeleteAsync<T>(int id)
+        public Task<T> DeleteAsync<T>(int id, string token)
         {
             return SendAsync<T>(new APIRequest()
             {
                 ApiType = SD.ApiType.DELETE,      
-                URL = apartmentUrl + "/api/apartmentAPI/" + id
+                URL = apartmentUrl + "/api/apartmentAPI/" + id,
+                Token = token
             });
         }
 
-        public Task<T> GetAllAsync<T>()
+        public Task<T> GetAllAsync<T>(string token)
         {
             return SendAsync<T>(new APIRequest()
             {
                 ApiType = SD.ApiType.GET,
-                URL = apartmentUrl + "/api/apartmentAPI"
+                URL = apartmentUrl + "/api/apartmentAPI",
+                Token = token
             });
         }
 
-        public Task<T> GetAsync<T>(int id)
+        public Task<T> GetAsync<T>(int id, string token)
         {
             return SendAsync<T>(new APIRequest()
             {
                 ApiType = SD.ApiType.GET,
-                URL = apartmentUrl + "/api/apartmentAPI/" + id
+                URL = apartmentUrl + "/api/apartmentAPI/" + id,
+                Token = token
             });
         }
 
-        public Task<T> UpdateAsync<T>(ApartmentUpdateDTO dto)
+        public Task<T> UpdateAsync<T>(ApartmentUpdateDTO dto, string token)
         {
             return SendAsync<T>(new APIRequest()
             {
                 ApiType = SD.ApiType.PUT,
                 Data = dto,
-                URL = apartmentUrl + "/api/apartmentAPI/" + dto.Id
+                URL = apartmentUrl + "/api/apartmentAPI/" + dto.Id,
+                Token = token
             });
         }
     }

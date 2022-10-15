@@ -2,6 +2,7 @@
 using Apartment_Web.Models;
 using Apartment_Web.Services.IServices;
 using Newtonsoft.Json;
+using System.Net.Http.Headers;
 using System.Runtime.InteropServices;
 using System.Text;
 
@@ -45,6 +46,10 @@ namespace Apartment_Web.Services
                         break;
                 }
                 HttpResponseMessage apiResponse = null;
+                if (!string.IsNullOrEmpty(apiRequest.Token))
+                {
+                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", apiRequest.Token);
+                }
                 apiResponse = await client.SendAsync(message);
 
                 var apiContent = await apiResponse.Content.ReadAsStringAsync();
@@ -61,7 +66,7 @@ namespace Apartment_Web.Services
                         return returnObject;
                     }
                 }
-                catch (Exception e)
+                catch (Exception ex)
                 {
                     var exceptionResponse = JsonConvert.DeserializeObject<T>(apiContent);
                     return exceptionResponse;

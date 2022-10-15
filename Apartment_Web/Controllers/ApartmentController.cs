@@ -1,4 +1,5 @@
-﻿using Apartment_Web.Models;
+﻿using Apartment_Utility;
+using Apartment_Web.Models;
 using Apartment_Web.Models.DTO;
 using Apartment_Web.Services.IServices;
 using AutoMapper;
@@ -25,7 +26,7 @@ namespace Apartment_Web.Controllers
         {
             List<ApartmentDTO> list = new();
 
-            var response = await _apartmentService.GetAllAsync<APIResponse>();
+            var response = await _apartmentService.GetAllAsync<APIResponse>(HttpContext.Session.GetString(SD.SessionToken));
             if (response != null && response.isSuccess)
             {
                 //we convert that to string, then we deserialize that to list od apart dto and we assign that to list
@@ -48,7 +49,7 @@ namespace Apartment_Web.Controllers
         {
             if (ModelState.IsValid)
             {
-                var response = await _apartmentService.CreateAsync<APIResponse>(model);
+                var response = await _apartmentService.CreateAsync<APIResponse>(model, HttpContext.Session.GetString(SD.SessionToken));
                 if (response != null && response.isSuccess)
 
                 {
@@ -64,7 +65,7 @@ namespace Apartment_Web.Controllers
         public async Task<IActionResult> UpdateApartment(int apartmentId) // we will get aprt id
         {
             //then we will pass that id
-            var response = await _apartmentService.GetAsync<APIResponse>(apartmentId);
+            var response = await _apartmentService.GetAsync<APIResponse>(apartmentId, HttpContext.Session.GetString(SD.SessionToken));
             //and we will retrieve the complete apartment
             if (response != null && response.isSuccess)
             {
@@ -87,7 +88,7 @@ namespace Apartment_Web.Controllers
             if (ModelState.IsValid)
             {
                 TempData["success"] = "Apartment has been updated";
-                var response = await _apartmentService.UpdateAsync<APIResponse>(model);
+                var response = await _apartmentService.UpdateAsync<APIResponse>(model, HttpContext.Session.GetString(SD.SessionToken));
                 if (response != null && response.isSuccess)
                 {
                     //we redirect back to index apartment
@@ -95,7 +96,7 @@ namespace Apartment_Web.Controllers
                 }
                 
             }
-            TempData["ERROR"] = "Error. Please check if everything is okay.";
+            TempData["error"] = "Error. Please check if everything is okay.";
             //else we return back if the model state is not valid
             return View(model);
 
@@ -105,7 +106,7 @@ namespace Apartment_Web.Controllers
         public async Task<IActionResult> DeleteApartment(int apartmentId) // we will get aprt id
         {
             //then we will pass that id
-            var response = await _apartmentService.GetAsync<APIResponse>(apartmentId);
+            var response = await _apartmentService.GetAsync<APIResponse>(apartmentId, HttpContext.Session.GetString(SD.SessionToken));
             //and we will retrieve the complete apartment
             if (response != null && response.isSuccess)
             {
@@ -125,14 +126,14 @@ namespace Apartment_Web.Controllers
         public async Task<IActionResult> DeleteApartment(ApartmentDTO model)
         {
            
-                var response = await _apartmentService.DeleteAsync<APIResponse>(model.Id);
+                var response = await _apartmentService.DeleteAsync<APIResponse>(model.Id, HttpContext.Session.GetString(SD.SessionToken));
                 if (response != null && response.isSuccess)
                 {
                 TempData["success"] = "Apartment has been removed";
                 //we redirect back to index apartment
                 return RedirectToAction(nameof(IndexApartment));
                 }
-            TempData["ERROR"] = "Error. Please check if everything is okay.";
+            TempData["error"] = "Error. Please check if everything is okay.";
             //else we return back if the model state is not valid
             return View(model);
 
