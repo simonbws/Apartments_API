@@ -14,6 +14,10 @@ builder.Services.AddScoped<IApartmentService, ApartmentService>();
 builder.Services.AddHttpClient<IApartmentNumberService, ApartmentNumberService>();
 builder.Services.AddScoped<IApartmentNumberService, ApartmentNumberService>();
 
+builder.Services.AddHttpClient<IAuthorizationService, AuthorizationService>();
+builder.Services.AddScoped<IAuthorizationService, AuthorizationService>();
+
+
 
 var app = builder.Build();
 
