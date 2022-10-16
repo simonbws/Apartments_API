@@ -4,6 +4,7 @@ using Apartment_API.Database;
 using Apartment_API.Repository;
 using Apartment_API.Repository.IRepository;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -20,6 +21,17 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();
 //we register repository in dependency injection
 builder.Services.AddScoped<IApartmentNumberRepository,ApartmentNumberRepository>(); // interface and implementation of the interface
 builder.Services.AddAutoMapper(typeof(MapProperties)); // this ensures transfer even 50 or more 
+builder.Services.AddApiVersioning(options =>
+{
+    options.AssumeDefaultVersionWhenUnspecified = true;
+    options.DefaultApiVersion = new ApiVersion(1, 0);
+    options.ReportApiVersions = true;
+});
+builder.Services.AddVersionedApiExplorer(options =>
+{
+    options.GroupNameFormat = "'v'VVV";
+    options.SubstituteApiVersionInUrl = true;
+});
 var key = builder.Configuration.GetValue<string>("ApiSettings:Secret");
 //mappings into config file
 builder.Services.AddAuthentication(x =>

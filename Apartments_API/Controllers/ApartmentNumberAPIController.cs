@@ -14,8 +14,10 @@ using System.Net;
 
 namespace Apartments_API.Controllers
 {
-    [Route("api/ApartmentNumberAPI")]
+    [Route("api/v{version:apiVersion}/ApartmentNumberAPI")]
     [ApiController]
+    [ApiVersion("1.0")]
+    [ApiVersion("2.0")]
     public class ApartmentNumberAPIController : ControllerBase
     {
         protected APIResponse _response;
@@ -32,6 +34,7 @@ namespace Apartments_API.Controllers
 
         }
         [HttpGet]
+        [MapToApiVersion("1.0")]
         [ProducesResponseType(StatusCodes.Status200OK)]
 
         public async Task<ActionResult<APIResponse>> GetApartmentNumbers()
@@ -52,6 +55,15 @@ namespace Apartments_API.Controllers
             }
             return _response;
         }
+
+        [MapToApiVersion("2.0")]
+        [HttpGet]
+
+        public IEnumerable<string> Get()
+        {
+            return new string[] { "value1", "value2" };
+        }
+
         [HttpGet("{id:int}", Name = "GetApartmentNumber")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
