@@ -8,7 +8,7 @@ namespace Apartment_API.Controllers
 {
     [Route("api/v{version:apiVersion}/UserAuth")]
     [ApiController]
-    [ApiVersion("1.0")]
+    [ApiVersionNeutral]
     public class UserController : Controller
     {
         private readonly IUserRepository _userRepository;
@@ -16,7 +16,7 @@ namespace Apartment_API.Controllers
         public UserController(IUserRepository userRepository)
         {
             _userRepository = userRepository;
-            this._response = new(); // we initialize the response
+            _response = new(); // we initialize the response
         }
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginRequestDTO model)
@@ -33,7 +33,7 @@ namespace Apartment_API.Controllers
             _response.isSuccess = true;
             _response.Result = loginResponse;
             return Ok(_response);
-            
+
 
         }
         [HttpPost("register")]

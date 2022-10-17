@@ -27,7 +27,7 @@ namespace Apartment_Web.Services
             {
                 ApiType = SD.ApiType.POST,
                 Data = createObj,
-                URL = apartmentUrl + "/api/UserAuth/login"
+                URL = apartmentUrl + "/api/v1/UserAuth/login"
             });
         }
         public Task<T> RegisterAsync<T>(RegisterRequestDTO createObj)
@@ -36,7 +36,7 @@ namespace Apartment_Web.Services
             {
                 ApiType = SD.ApiType.POST,
                 Data = createObj,
-                URL = apartmentUrl + "/api/UserAuth/register"
+                URL = apartmentUrl + "/api/v1/UserAuth/register"
             });
         }
 

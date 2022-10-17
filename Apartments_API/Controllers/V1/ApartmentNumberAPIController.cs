@@ -12,26 +12,34 @@ using System.Collections.Generic;
 using System.Data;
 using System.Net;
 
-namespace Apartments_API.Controllers
+namespace Apartment_API.Controllers.V1
 {
     [Route("api/v{version:apiVersion}/ApartmentNumberAPI")]
     [ApiController]
     [ApiVersion("1.0")]
-    public class ApartmentNumberAPIV1Controller : ControllerBase
+    
+    public class ApartmentNumberAPIController : ControllerBase
     {
         protected APIResponse _response;
         private readonly IApartmentNumberRepository _dbApartmentNumber;
         private readonly IApartmentRepository _dbApartment;
         private readonly IMapper _mapper;
 
-        public ApartmentNumberAPIV1Controller(IApartmentNumberRepository dbApartmentNumber, IMapper mapper, IApartmentRepository dbApartment)
+        public ApartmentNumberAPIController(IApartmentNumberRepository dbApartmentNumber, IMapper mapper, IApartmentRepository dbApartment)
         {
             _dbApartmentNumber = dbApartmentNumber;
             _mapper = mapper;
-            this._response = new();
+            _response = new();
             _dbApartment = dbApartment;
-
         }
+
+        [HttpGet("GetString")]
+
+        public IEnumerable<string> Get()
+        {
+            return new string[] { "String1", "String2" };
+        }
+
         [HttpGet]
         //[MapToApiVersion("1.0")]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -40,7 +48,7 @@ namespace Apartments_API.Controllers
         {
             try
             {
-                IEnumerable<ApartmentNumber> apartmentNumberList = await _dbApartmentNumber.GetAllAsync(includeProperties:"Apartment");
+                IEnumerable<ApartmentNumber> apartmentNumberList = await _dbApartmentNumber.GetAllAsync(includeProperties: "Apartment");
                 _response.Result = _mapper.Map<List<ApartmentNumberDTO>>(apartmentNumberList);
                 _response.StatusCode = HttpStatusCode.OK;
                 return Ok(_response);
@@ -157,7 +165,7 @@ namespace Apartments_API.Controllers
                 _response.Errors
                     = new List<string>() { ex.ToString() };
             }
-            return _response;  
+            return _response;
         }
         [Authorize(Roles = "admin")]
         [HttpPut("{id:int}", Name = "UpdateApartmentNumber")]
@@ -167,7 +175,7 @@ namespace Apartments_API.Controllers
         {
             try
             {
-                
+
                 if (updateDTO == null || id != updateDTO.ApartmentNo)
                 {
                     return BadRequest();
@@ -180,10 +188,10 @@ namespace Apartments_API.Controllers
 
                 ApartmentNumber model = _mapper.Map<ApartmentNumber>(updateDTO);
 
-                await _dbApartmentNumber.UpdateAsync(model); 
+                await _dbApartmentNumber.UpdateAsync(model);
                 _response.StatusCode = HttpStatusCode.NoContent;
                 _response.isSuccess = true;
-                return Ok(_response); 
+                return Ok(_response);
             }
             catch (Exception ex)
             {
@@ -191,7 +199,7 @@ namespace Apartments_API.Controllers
                 _response.Errors
                     = new List<string>() { ex.ToString() };
             }
-            return _response; 
+            return _response;
         }
     }
 }

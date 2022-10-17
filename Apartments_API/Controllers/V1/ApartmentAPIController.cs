@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Net;
 
-namespace Apartments_API.Controllers
+namespace Apartment_API.Controllers.V1
 {
     [Route("api/v{version:apiVersion}/ApartmentAPI")]
     [ApiController]
@@ -27,7 +27,7 @@ namespace Apartments_API.Controllers
 
             _dbApartment = dbApartment;
             _mapper = mapper;
-            this._response = new();
+            _response = new();
         }
 
         [HttpGet]
@@ -55,7 +55,7 @@ namespace Apartments_API.Controllers
             return _response;
 
         }
-        
+
         [HttpGet("{id:int}", Name = "GetApartment")]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]

@@ -12,35 +12,35 @@ using System.Collections.Generic;
 using System.Data;
 using System.Net;
 
-namespace Apartments_API.Controllers
+namespace Apartment_API.Controllers.V2
 {
     [Route("api/v{version:apiVersion}/ApartmentNumberAPI")]
     [ApiController]
     [ApiVersion("2.0")]
-    public class ApartmentNumberAPIV2Controller : ControllerBase
+    public class ApartmentNumberAPIController : ControllerBase
     {
         protected APIResponse _response;
         private readonly IApartmentNumberRepository _dbApartmentNumber;
         private readonly IApartmentRepository _dbApartment;
         private readonly IMapper _mapper;
 
-        public ApartmentNumberAPIV2Controller(IApartmentNumberRepository dbApartmentNumber, IMapper mapper, IApartmentRepository dbApartment)
+        public ApartmentNumberAPIController(IApartmentNumberRepository dbApartmentNumber, IMapper mapper, IApartmentRepository dbApartment)
         {
             _dbApartmentNumber = dbApartmentNumber;
             _mapper = mapper;
-            this._response = new();
+            _response = new();
             _dbApartment = dbApartment;
         }
 
         //[MapToApiVersion("2.0")]
-        [HttpGet]
+        [HttpGet("GetString")]
 
         public IEnumerable<string> Get()
         {
             return new string[] { "value1", "value2" };
         }
 
-        
+
     }
 }
 

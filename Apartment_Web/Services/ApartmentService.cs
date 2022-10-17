@@ -24,7 +24,7 @@ namespace Apartment_Web.Services
             {
                 ApiType = SD.ApiType.POST,
                 Data = dto,
-                URL = apartmentUrl + "/api/apartmentAPI",
+                URL = apartmentUrl + "/api/v1/apartmentAPI",
                 Token = token
             });
         }
@@ -34,7 +34,7 @@ namespace Apartment_Web.Services
             return SendAsync<T>(new APIRequest()
             {
                 ApiType = SD.ApiType.DELETE,      
-                URL = apartmentUrl + "/api/apartmentAPI/" + id,
+                URL = apartmentUrl + "/api/v1/apartmentAPI/" + id,
                 Token = token
             });
         }
@@ -44,7 +44,7 @@ namespace Apartment_Web.Services
             return SendAsync<T>(new APIRequest()
             {
                 ApiType = SD.ApiType.GET,
-                URL = apartmentUrl + "/api/apartmentAPI",
+                URL = apartmentUrl + "/api/v1/apartmentAPI",
                 Token = token
             });
         }
@@ -54,7 +54,7 @@ namespace Apartment_Web.Services
             return SendAsync<T>(new APIRequest()
             {
                 ApiType = SD.ApiType.GET,
-                URL = apartmentUrl + "/api/apartmentAPI/" + id,
+                URL = apartmentUrl + "/api/v1/apartmentAPI/" + id,
                 Token = token
             });
         }
@@ -65,7 +65,7 @@ namespace Apartment_Web.Services
             {
                 ApiType = SD.ApiType.PUT,
                 Data = dto,
-                URL = apartmentUrl + "/api/apartmentAPI/" + dto.Id,
+                URL = apartmentUrl + "/api/v1/apartmentAPI/" + dto.Id,
                 Token = token
             });
         }
