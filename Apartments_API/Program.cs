@@ -68,7 +68,7 @@ builder.Services.AddSwaggerGen(options =>
         In = ParameterLocation.Header,
         Scheme = "Bearer"
     });
-options.AddSecurityRequirement(new OpenApiSecurityRequirement()
+    options.AddSecurityRequirement(new OpenApiSecurityRequirement()
     {
         {
             new OpenApiSecurityScheme
@@ -84,7 +84,19 @@ options.AddSecurityRequirement(new OpenApiSecurityRequirement()
             },
             new List<string>()
         }
-});
+    });
+    options.SwaggerDoc("v2", new OpenApiInfo
+    {
+        Version = "v2.0",
+        Title = "Apartment",
+        Description = "API to manage Apartments"
+    });
+    options.SwaggerDoc("v1", new OpenApiInfo
+    {
+        Version = "v1.0",
+        Title = "Apartment",
+        Description = "API to manage Apartments"
+    });
 });
 var app = builder.Build();
 
@@ -92,7 +104,11 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseSwaggerUI(options =>
+    {
+        options.SwaggerEndpoint("/swagger/v1/swagger.json", "ApartmentV1");
+        options.SwaggerEndpoint("/swagger/v2/swagger.json", "ApartmentV2");
+    });
 }
 
 app.UseHttpsRedirection();

@@ -17,15 +17,14 @@ namespace Apartments_API.Controllers
     [Route("api/v{version:apiVersion}/ApartmentNumberAPI")]
     [ApiController]
     [ApiVersion("1.0")]
-    [ApiVersion("2.0")]
-    public class ApartmentNumberAPIController : ControllerBase
+    public class ApartmentNumberAPIV1Controller : ControllerBase
     {
         protected APIResponse _response;
         private readonly IApartmentNumberRepository _dbApartmentNumber;
         private readonly IApartmentRepository _dbApartment;
         private readonly IMapper _mapper;
 
-        public ApartmentNumberAPIController(IApartmentNumberRepository dbApartmentNumber, IMapper mapper, IApartmentRepository dbApartment)
+        public ApartmentNumberAPIV1Controller(IApartmentNumberRepository dbApartmentNumber, IMapper mapper, IApartmentRepository dbApartment)
         {
             _dbApartmentNumber = dbApartmentNumber;
             _mapper = mapper;
@@ -34,7 +33,7 @@ namespace Apartments_API.Controllers
 
         }
         [HttpGet]
-        [MapToApiVersion("1.0")]
+        //[MapToApiVersion("1.0")]
         [ProducesResponseType(StatusCodes.Status200OK)]
 
         public async Task<ActionResult<APIResponse>> GetApartmentNumbers()
@@ -54,14 +53,6 @@ namespace Apartments_API.Controllers
 
             }
             return _response;
-        }
-
-        [MapToApiVersion("2.0")]
-        [HttpGet]
-
-        public IEnumerable<string> Get()
-        {
-            return new string[] { "value1", "value2" };
         }
 
         [HttpGet("{id:int}", Name = "GetApartmentNumber")]
