@@ -31,7 +31,7 @@ namespace Apartment_API.Controllers.V1
         }
 
         [HttpGet]
-        [ResponseCache(Duration =30)]
+        [ResponseCache(CacheProfileName = "Default30")]
         // only authorize user is able to access this endpoint
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
