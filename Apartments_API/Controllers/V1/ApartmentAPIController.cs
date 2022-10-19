@@ -36,7 +36,8 @@ namespace Apartment_API.Controllers.V1
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult<APIResponse>> GetApartments([FromQuery(Name ="filterOccupancy")]int? occupancy)
+        public async Task<ActionResult<APIResponse>> GetApartments([FromQuery(Name ="filterOccupancy")]int? occupancy,
+            [FromQuery] string? search)
         {
             try
             {
@@ -50,7 +51,11 @@ namespace Apartment_API.Controllers.V1
                 {
                     apartmentList = await _dbApartment.GetAllAsync();
                 }
-                _dbApartment.GetAllAsync();
+                if (!string.IsNullOrEmpty(search)) // if search is not empty
+                {
+                    apartmentList = apartmentList.Where(u=>u.Name.ToLower().Contains(search)); // convert to lower case and add contains to do some kind of search
+                }
+                //_dbApartment.GetAllAsync();
                 _response.Result = _mapper.Map<List<ApartmentDTO>>(apartmentList);
                 _response.StatusCode = HttpStatusCode.OK;
                 //we need to now convert that to villa dto, destination type is apartDTO and in
