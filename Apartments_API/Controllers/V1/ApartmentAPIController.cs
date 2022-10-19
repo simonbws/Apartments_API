@@ -31,6 +31,7 @@ namespace Apartment_API.Controllers.V1
         }
 
         [HttpGet]
+        [ResponseCache(Duration =30)]
         // only authorize user is able to access this endpoint
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
@@ -62,6 +63,7 @@ namespace Apartment_API.Controllers.V1
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
+        //[ResponseCache(Location =ResponseCacheLocation.None, NoStore =true)]
         public async Task<ActionResult<APIResponse>> GetApartment(int id)
         {
             try
