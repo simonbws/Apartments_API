@@ -38,6 +38,7 @@ namespace Apartment_API.Repository
             {
                 q = q.Where(filter);
             }
+           
             if (includeProperties != null)
             {
                 //split include properties by the coma and and if there are any empty entries, remove them
@@ -49,12 +50,20 @@ namespace Apartment_API.Repository
             return await q.FirstOrDefaultAsync();
         }
 
-        public async Task<List<T>> GetAllAsync(Expression<Func<T, bool>>? filter = null, string? includeProperties = null)
+        public async Task<List<T>> GetAllAsync(Expression<Func<T, bool>>? filter = null, string? includeProperties = null, int pageSize = 0, int pageNumber = 1)
         {
             IQueryable<T> q = dbSet;
             if (filter != null)
             {
                 q = q.Where(filter);
+            }
+            if (pageSize > 0)
+            {
+                if (pageSize > 100)
+                {
+                    pageSize = 100;
+                }
+                q = q.Skip(pageSize * (pageNumber - 1)).Take(pageSize);
             }
             if (includeProperties != null)
             {

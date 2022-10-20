@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Net;
+using System.Text.Json;
 
 namespace Apartment_API.Controllers.V1
 {
@@ -37,7 +38,7 @@ namespace Apartment_API.Controllers.V1
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult<APIResponse>> GetApartments([FromQuery(Name ="filterOccupancy")]int? occupancy,
-            [FromQuery] string? search)
+            [FromQuery] string? search, int pageSize = 0, int pageNumber = 1)
         {
             try
             {
@@ -45,16 +46,20 @@ namespace Apartment_API.Controllers.V1
                 if (occupancy > 0)
                 {
                     //return the apartms based on the occupancy
-                    apartmentList = await _dbApartment.GetAllAsync(u => u.Occupancy == occupancy);
+                    apartmentList = await _dbApartment.GetAllAsync(u => u.Occupancy == occupancy, pageSize:pageSize,
+                        pageNumber:pageNumber);
                 }
                 else
                 {
-                    apartmentList = await _dbApartment.GetAllAsync();
+                    apartmentList = await _dbApartment.GetAllAsync(pageSize: pageSize,
+                        pageNumber: pageNumber);
                 }
                 if (!string.IsNullOrEmpty(search)) // if search is not empty
                 {
                     apartmentList = apartmentList.Where(u=>u.Name.ToLower().Contains(search)); // convert to lower case and add contains to do some kind of search
                 }
+                Pagination pagination = new() { PageNumber = pageNumber, PageSize = pageSize };
+                Response.Headers.Add("X-Pagination", JsonSerializer.Serialize(pagination));
                 //_dbApartment.GetAllAsync();
                 _response.Result = _mapper.Map<List<ApartmentDTO>>(apartmentList);
                 _response.StatusCode = HttpStatusCode.OK;
